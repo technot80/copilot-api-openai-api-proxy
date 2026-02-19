@@ -25,6 +25,7 @@ interface RunServerOptions {
   claudeCode: boolean
   showToken: boolean
   proxyEnv: boolean
+  debug: boolean
 }
 
 export async function runServer(options: RunServerOptions): Promise<void> {
@@ -46,6 +47,11 @@ export async function runServer(options: RunServerOptions): Promise<void> {
   state.rateLimitSeconds = options.rateLimit
   state.rateLimitWait = options.rateLimitWait
   state.showToken = options.showToken
+  state.debugLogging = options.debug || Boolean(process.env.COPILOT_API_DEBUG)
+  
+  if (state.debugLogging) {
+    consola.info("Debug logging enabled for /v1/responses endpoint")
+  }
 
   await ensurePaths()
   await cacheVSCodeVersion()
@@ -184,6 +190,11 @@ export const start = defineCommand({
       default: false,
       description: "Initialize proxy from environment variables",
     },
+    debug: {
+      type: "boolean",
+      default: false,
+      description: "Enable debug logging for /v1/responses endpoint (also via COPILOT_API_DEBUG env var)",
+    },
   },
   run({ args }) {
     const rateLimitRaw = args["rate-limit"]
@@ -202,6 +213,7 @@ export const start = defineCommand({
       claudeCode: args["claude-code"],
       showToken: args["show-token"],
       proxyEnv: args["proxy-env"],
+      debug: args.debug,
     })
   },
 })

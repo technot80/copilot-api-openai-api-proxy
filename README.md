@@ -1,5 +1,16 @@
 # Copilot API Proxy
 
+> [!NOTE]
+> **This is a fork with enhanced support for the OpenAI Responses API.**
+> 
+> **New features added:**
+> - **`/v1/responses` endpoint**: Full support for OpenAI's Responses API format, enabling compatibility with GPT-5 Codex and other Responses-only models
+> - **Automatic endpoint routing**: Detects which endpoint each model supports (`/responses` or `/chat/completions`) and routes requests accordingly
+> - **Tool calling support**: Full function calling support with the Responses API, including `function_call` and `function_call_output` handling
+> - **Orphan output filtering**: Automatically filters orphan `function_call_output` items (e.g., from mid-session model switches) to prevent API errors
+> - **`--debug` flag**: Optional debug logging for the `/v1/responses` endpoint (also via `COPILOT_API_DEBUG` env var)
+> - **`supported_endpoints` in models**: The `/v1/models` endpoint now includes which API endpoints each model supports
+
 > [!WARNING]
 > This is a reverse-engineered proxy of GitHub Copilot API. It is not supported by GitHub, and may break unexpectedly. Use at your own risk.
 
@@ -163,6 +174,7 @@ The following command line options are available for the `start` command:
 | --claude-code  | Generate a command to launch Claude Code with Copilot API config              | false      | -c    |
 | --show-token   | Show GitHub and Copilot tokens on fetch and refresh                           | false      | none  |
 | --proxy-env    | Initialize proxy from environment variables                                   | false      | none  |
+| --debug        | Enable debug logging for /v1/responses endpoint (also via COPILOT_API_DEBUG)  | false      | none  |
 
 ### Auth Command Options
 
@@ -188,7 +200,8 @@ These endpoints mimic the OpenAI API structure.
 | Endpoint                    | Method | Description                                               |
 | --------------------------- | ------ | --------------------------------------------------------- |
 | `POST /v1/chat/completions` | `POST` | Creates a model response for the given chat conversation. |
-| `GET /v1/models`            | `GET`  | Lists the currently available models.                     |
+| `POST /v1/responses`        | `POST` | Creates a model response using the Responses API format. Supports GPT-5 Codex and other Responses-only models. |
+| `GET /v1/models`            | `GET`  | Lists the currently available models, including `supported_endpoints` for each. |
 | `POST /v1/embeddings`       | `POST` | Creates an embedding vector representing the input text.  |
 
 ### Anthropic Compatible Endpoints
