@@ -17,10 +17,11 @@ modelRoutes.get("/", async (c) => {
       id: model.id,
       object: "model",
       type: "model",
-      created: 0, // No date available from source
-      created_at: new Date(0).toISOString(), // No date available from source
+      created: 0,
+      created_at: new Date(0).toISOString(),
       owned_by: model.vendor,
       display_name: model.name,
+      supported_endpoints: model.supported_endpoints,
     }))
 
     return c.json({
